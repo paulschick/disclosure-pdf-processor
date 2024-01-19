@@ -1,4 +1,5 @@
 import configparser
+from configparser import SafeConfigParser
 from pathlib import Path
 import typer
 
@@ -8,6 +9,8 @@ from extractor import (
 
 CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
+
+parser = SafeConfigParser()
 
 
 def init_app() -> int:
@@ -20,6 +23,28 @@ def init_app() -> int:
     except OSError:
         return FILE_ERROR
     return _create_data_dirs()
+
+
+def set_image_source_directory(image_source_directory: str) -> int:
+    try:
+        parser.read(CONFIG_FILE_PATH)
+        parser['default']['image_source_directory'] = image_source_directory
+        with CONFIG_FILE_PATH.open('w') as config_file:
+            parser.write(config_file)
+    except OSError:
+        return CONFIG_WRITE_ERROR
+    set_dir = parser.get('default', 'image_source_directory')
+    typer.secho(
+        f'Set image source directory to "{set_dir}"',
+        fg=typer.colors.BLUE)
+    return SUCCESS
+
+
+def print_config() -> None:
+    parser.read(CONFIG_FILE_PATH)
+    default_config = parser['default']
+    for key in default_config:
+        typer.secho(f'{key}: {default_config[key]}', fg=typer.colors.BLUE)
 
 
 def _create_data_dirs() -> int:

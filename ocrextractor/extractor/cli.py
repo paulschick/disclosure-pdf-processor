@@ -41,5 +41,33 @@ def init() -> None:
         )
 
 
+@app.command()
+def set_images_source(
+        image_source_directory: str = typer.Argument(
+            ...,
+            help="The directory containing the images to be processed",
+        )
+) -> None:
+    set_image_source_dir_err = config.set_image_source_directory(
+        image_source_directory
+    )
+    if set_image_source_dir_err:
+        typer.secho(
+            f'Setting image source directory failed with error: "{ERRORS[set_image_source_dir_err]}"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+    else:
+        typer.secho(
+            f'Set image source directory to "{image_source_directory}"',
+            fg=typer.colors.GREEN,
+        )
+
+
+@app.command()
+def print_config() -> None:
+    config.print_config()
+
+
 if __name__ == '__main__':
     app()
