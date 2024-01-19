@@ -1,4 +1,5 @@
 import cv2
+import pandas as pd
 import pytesseract
 
 
@@ -51,3 +52,12 @@ class ExtractorV1:
         thresh = self.get_threshold()
         text = pytesseract.image_to_string(thresh, config=ExtractorV1.tessdata_dir_config)
         return text
+
+    def extract_to_df(self):
+        thresh = self.get_threshold()
+        data: pd.DataFrame = pytesseract.image_to_data(
+            thresh,
+            config=ExtractorV1.tessdata_dir_config,
+            output_type=pytesseract.Output.DATAFRAME
+        )
+        return data[data['text'].notnull()]
