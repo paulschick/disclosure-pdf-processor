@@ -41,11 +41,17 @@ if __name__ == '__main__':
     fp1 = 'samples/2024-1-Lloyd-Doggett-20024268.png'
     fp2 = 'samples/2015-2-Charles-Dent.png'
     i, coor = mark_region(fp1)
-    plt.figure(figsize=(12, 10))
+    # plt.figure(figsize=(12, 10))
 
     # Gets the best text extraction with threshold
     ret, thresh1 = cv2.threshold(i, 120, 255, cv2.THRESH_BINARY)
-    plt.imshow(thresh1)
-    plt.show()
+    # plt.imshow(thresh1)
+    # plt.show()
     text = pytesseract.image_to_string(thresh1, config=tessdata_dir_config)
-    print(text)
+    # print(text)
+    text_lines = text.split('\n')
+    i = 0
+    for line in text_lines:
+        if line:
+            print(f'{i}: {line}')
+            i += 1
