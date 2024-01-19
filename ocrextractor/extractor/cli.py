@@ -1,5 +1,6 @@
 import typer
-from extractor import __app_name__, __version__, config, ERRORS, copy_image
+from extractor import __app_name__, __version__, config, ERRORS, copy_image, extract_to_csv
+from extractor.msg_formatter import format_msg
 from typing import Optional
 
 app = typer.Typer()
@@ -83,6 +84,40 @@ def copy_images() -> None:
             f'Copied images from {config.get_config().image_source_directory} to {config.get_config().images_dir}',
             fg=typer.colors.GREEN,
         )
+
+
+@app.command()
+def ocr_images(
+        limit: Optional[int] = typer.Option(
+            None,
+            "--limit",
+            "-l",
+            help="Limit the number of images to be processed",
+        )
+) -> None:
+    msg = [
+        ('OCR', typer.colors.BRIGHT_WHITE, True),
+        (' Images', typer.colors.BRIGHT_WHITE, False),
+    ]
+    print()
+    format_msg(msg)
+    extract_to_csv_err = extract_to_csv.extract_to_csv_if_not_present(limit)
+    if extract_to_csv_err:
+        typer.secho(
+            f'Extracting images failed with error: "{ERRORS[extract_to_csv_err]}"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+    else:
+        conf = config.get_config()
+        msg_constructor = [
+            ('Extracted images from', typer.colors.GREEN, False),
+            (f' {conf.images_dir} ', typer.colors.BRIGHT_WHITE, False),
+            ('to', typer.colors.GREEN, False),
+            (f' {conf.csv_dir}', typer.colors.BRIGHT_WHITE, False),
+        ]
+        print()
+        format_msg(msg_constructor)
 
 
 if __name__ == '__main__':

@@ -7,11 +7,13 @@ __version__ = '0.1.0'
     FILE_ERROR,
     CONFIG_WRITE_ERROR,
     IMAGE_COPY_ERROR,
-) = range(5)
+    EXTRACTION_ERROR,
+) = range(6)
 
 ERRORS = {
     DIR_ERROR: 'Configuration directory error',
     FILE_ERROR: 'Configuration file error',
     CONFIG_WRITE_ERROR: 'Configuration write error',
     IMAGE_COPY_ERROR: 'Image copy error',
+    EXTRACTION_ERROR: 'Extraction error',
 }
