@@ -1,5 +1,5 @@
 import typer
-from extractor import __app_name__, __version__, config, ERRORS
+from extractor import __app_name__, __version__, config, ERRORS, copy_image
 from typing import Optional
 
 app = typer.Typer()
@@ -67,6 +67,22 @@ def set_images_source(
 @app.command()
 def print_config() -> None:
     config.print_config()
+
+
+@app.command()
+def copy_images() -> None:
+    copy_images_err = copy_image.copy_images_if_not_present()
+    if copy_images_err:
+        typer.secho(
+            f'Copying images failed with error: "{ERRORS[copy_images_err]}"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+    else:
+        typer.secho(
+            f'Copied images from {config.get_config().image_source_directory} to {config.get_config().images_dir}',
+            fg=typer.colors.GREEN,
+        )
 
 
 if __name__ == '__main__':

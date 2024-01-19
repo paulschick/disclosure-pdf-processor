@@ -13,6 +13,17 @@ CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
 parser = SafeConfigParser()
 
 
+class Config:
+    def __init__(self) -> None:
+        parser.read(CONFIG_FILE_PATH)
+        default_config = parser['default']
+        self.data_dir = Path(default_config['data_dir'])
+        self.images_dir = Path(default_config['images_dir'])
+        self.csv_dir = Path(default_config['csv_dir'])
+        self.failed_file = Path(default_config['failed_file'])
+        self.image_source_directory = Path(default_config['image_source_directory'])
+
+
 def init_app() -> int:
     try:
         CONFIG_DIR_PATH.mkdir(exist_ok=True)
@@ -45,6 +56,10 @@ def print_config() -> None:
     default_config = parser['default']
     for key in default_config:
         typer.secho(f'{key}: {default_config[key]}', fg=typer.colors.BLUE)
+
+
+def get_config() -> Config:
+    return Config()
 
 
 def _create_data_dirs() -> int:
