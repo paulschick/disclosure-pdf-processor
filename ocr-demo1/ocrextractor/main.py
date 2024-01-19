@@ -19,6 +19,26 @@ def get_image_path(image_name=None) -> Path:
     return get_samples_dir() / TEST_IMG_1_NAME
 
 
+def get_create_csv_dir():
+    csv_dir = Path(os.getcwd()).parent / 'csv'
+    if not csv_dir.exists():
+        csv_dir.mkdir()
+    return csv_dir
+
+
+def get_csv_path(image_name=None) -> Path:
+    if not image_name:
+        image_name = TEST_IMG_1_NAME
+    image_name = image_name.split('.')[0]
+    return get_create_csv_dir() / f'{image_name}.csv'
+
+
+def write_if_not_exists(df: pd.DataFrame, image_name=None) -> None:
+    csv_path = get_csv_path(image_name)
+    if not csv_path.exists():
+        df.to_csv(csv_path, index=False)
+
+
 def example_print_confidences(df: pd.DataFrame):
     """
     Example of how to print confidences
@@ -51,3 +71,4 @@ if __name__ == '__main__':
     print_text_lines(text)
     df = extractor.extract_to_df()
     example_print_confidences(df)
+    write_if_not_exists(df)

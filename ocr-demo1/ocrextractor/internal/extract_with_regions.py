@@ -61,3 +61,7 @@ class ExtractorV1:
             output_type=pytesseract.Output.DATAFRAME
         )
         return data[data['text'].notnull()]
+
+    def dump_to_csv(self, output_path: str):
+        df = self.extract_to_df()
+        df.to_csv(output_path, index=False)
