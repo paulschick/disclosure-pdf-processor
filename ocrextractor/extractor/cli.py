@@ -1,5 +1,5 @@
 import typer
-from extractor import __app_name__, __version__
+from extractor import __app_name__, __version__, config, ERRORS
 from typing import Optional
 
 app = typer.Typer()
@@ -23,6 +23,22 @@ def main(
         )
 ) -> None:
     return
+
+
+@app.command()
+def init() -> None:
+    app_init_err = config.init_app()
+    if app_init_err:
+        typer.secho(
+            f'Creating directories and files failed with error: "{ERRORS[app_init_err]}"',
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
+    else:
+        typer.secho(
+            f'Created directories and files in "{config.CONFIG_DIR_PATH}"',
+            fg=typer.colors.GREEN,
+        )
 
 
 if __name__ == '__main__':
